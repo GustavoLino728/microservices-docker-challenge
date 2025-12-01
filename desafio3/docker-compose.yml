@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: desafio3-redis
+    networks:
+      - desafio3-network
+
+  api:
+    build: ./api
+    container_name: desafio3-api
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:///app.db
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"
+    volumes:
+      - api-data:/app
+    networks:
+      - desafio3-network
+
+  frontend:
+    build: ./frontend
+    container_name: desafio3-frontend
+    environment:
+      API_URL: http://api:8080
+    depends_on:
+      - api
+    ports:
+      - "8501:8501"
+    networks:
+      - desafio3-network
+
+volumes:
+  api-data:
+
+networks:
+  desafio3-network:
+    driver: bridge
