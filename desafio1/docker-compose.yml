@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    container_name: server
+    ports:
+      - "8080:8080"
+    networks:
+      - desafio1-network
+
+  client:
+    build: ./client
+    container_name: client
+    depends_on:
+      - server
+    networks:
+      - desafio1-network
+
+networks:
+  desafio1-network:
+    driver: bridge
