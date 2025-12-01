@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - desafio2-network
+
+  reader:
+    build: ./reader
+    container_name: reader
+    environment:
+      DB_HOST: postgres-db
+      DB_NAME: mydb
+      DB_USER: admin
+      DB_PASSWORD: admin123
+    depends_on:
+      - postgres
+    networks:
+      - desafio2-network
+
+volumes:
+  postgres-data:
+    name: desafio2-postgres-data
+
+networks:
+  desafio2-network:
+    driver: bridge
