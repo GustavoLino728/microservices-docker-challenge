@@ -1,0 +1,30 @@
+services:
+  users-service:
+    build: ./users-service
+    container_name: users-service
+    networks:
+      - gateway-network
+
+  orders-service:
+    build: ./orders-service
+    container_name: orders-service
+    networks:
+      - gateway-network
+
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    environment:
+      USERS_SERVICE_URL: http://users-service:5001
+      ORDERS_SERVICE_URL: http://orders-service:5002
+    depends_on:
+      - users-service
+      - orders-service
+    ports:
+      - "8080:8080"
+    networks:
+      - gateway-network
+
+networks:
+  gateway-network:
+    driver: bridge
